@@ -24,17 +24,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create public folder if it doesn't exist
-RUN mkdir -p /app/public
-
 # Copy built files from builder stage
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Copy public folder if it exists (ignore if not)
-RUN if [ -d /app/public ] && [ "$(ls -A /app/public)" ]; then \
-    cp -r /app/public ./public; \
-    fi || true
+COPY --from=builder /app/.next ./.next
 
 EXPOSE 3000
 
