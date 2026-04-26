@@ -76,6 +76,30 @@ A app abre em `http://localhost:3000`. Por defeito, o frontend chama `http://127
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
+## Deploy no Northflank
+
+O projeto esta preparado para dois combined services no Northflank, ambos a partir da raiz do repo:
+
+- Backend: `Dockerfile.backend`, porta publica HTTP `8000`.
+- Frontend: `Dockerfile.frontend`, porta publica HTTP `3000`.
+
+Variaveis recomendadas:
+
+Backend runtime environment:
+
+```bash
+PHS_DB_PATH=/app/data/personal_hedge.duckdb
+PHS_ALLOWED_ORIGINS=https://<frontend-service>.code.run
+```
+
+Frontend build arguments e runtime environment:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://<backend-service>.code.run
+```
+
+Em Next.js, `NEXT_PUBLIC_API_BASE_URL` tambem tem de existir como build argument, porque chamadas client-side sao compiladas no bundle. Se a pagina abrir sem estilos ou sem interatividade, confirme que o container copiou `.next/static` para a imagem standalone.
+
 ## Dados e fontes
 
 A watchlist inicial e criada automaticamente se a base estiver vazia:
@@ -137,21 +161,6 @@ cd frontend
 npm run typecheck
 npm run build
 ```
-
-## Publicacao here.now
-
-O snapshot publico atual esta em:
-
-`https://polite-quartz-w5nk.here.now/`
-
-Para atualizar o mesmo endpoint depois de alteracoes:
-
-```bash
-node scripts/build-here-now-site.mjs
-node scripts/publish-here-now.mjs
-```
-
-O script reutiliza o slug guardado em `.herenow/state.json`. Este ficheiro e estado local de publicacao e nao deve ser versionado.
 
 ## Nota legal
 

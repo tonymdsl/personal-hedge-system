@@ -25,6 +25,8 @@ DEFAULT_WATCHLIST = [
     {"symbol": "META", "name": "Meta Platforms Inc.", "asset_type": "Equity", "currency": "USD"},
 ]
 
+DEFAULT_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
 
 def get_db_path() -> Path:
     """Return the DuckDB path from env or the backend data directory."""
@@ -32,6 +34,14 @@ def get_db_path() -> Path:
     if configured:
         return Path(configured)
     return BACKEND_DIR / "data" / "personal_hedge.duckdb"
+
+
+def get_allowed_origins() -> list[str]:
+    """Return CORS origins from env or local defaults."""
+    configured = os.getenv("PHS_ALLOWED_ORIGINS")
+    if not configured:
+        return DEFAULT_ALLOWED_ORIGINS
+    return [origin.strip() for origin in configured.split(",") if origin.strip()]
 
 
 def ensure_runtime_dirs() -> None:
