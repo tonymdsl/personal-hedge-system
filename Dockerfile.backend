@@ -1,0 +1,26 @@
+# Backend Dockerfile - Build from repo root
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements from backend folder
+COPY backend/requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code from backend folder
+COPY backend/app/ ./app/
+
+# Create data directory for DuckDB
+RUN mkdir -p /app/data
+
+# Expose port
+EXPOSE 8000
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PHS_DB_PATH=/app/data/personal_hedge.duckdb
+
+# Run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
