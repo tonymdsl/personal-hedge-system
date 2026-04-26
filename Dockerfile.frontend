@@ -11,6 +11,7 @@ RUN npm ci
 
 # Copy source code from frontend folder
 COPY frontend/ ./
+RUN mkdir -p public
 
 # Build the Next.js application with the API URL provided by the deploy target
 ARG NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
