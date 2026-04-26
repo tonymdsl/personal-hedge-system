@@ -32,4 +32,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+# Next.js standalone puts server.js in .next/standalone/
+CMD ["node", ".next/standalone/server.js"]
