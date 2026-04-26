@@ -12,8 +12,9 @@ RUN npm ci
 # Copy source code from frontend folder
 COPY frontend/ ./
 
-# Build the Next.js application
+# Build the Next.js application with correct API URL
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_API_BASE_URL=https://p01--hedge--ztkp7429rdfw.code.run
 RUN npm run build
 
 # Production stage
@@ -23,6 +24,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_API_BASE_URL=https://p01--hedge--ztkp7429rdfw.code.run
 
 # Copy built files from builder stage
 COPY --from=builder /app/.next ./.next
