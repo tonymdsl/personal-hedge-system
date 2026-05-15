@@ -1,0 +1,260 @@
+project:
+  name: "Meridian Capital Partners"
+  folder: "ls_equity_fund"
+  description: "Local-first long/short equity research and paper-trading platform"
+  mode: "research_paper"
+  timezone: "America/New_York"
+  base_currency: "USD"
+  default_db_path: "cache/meridian.sqlite3"
+  default_output_dir: "output"
+  dry_run_default: true
+
+data:
+  universe:
+    source: "wikipedia_sp500"
+    cache_ttl_days: 7
+    include_benchmarks: true
+    benchmark_tickers:
+      - SPY
+      - QQQ
+      - IWM
+      - DIA
+      - ^VIX
+      - TLT
+      - HYG
+    sector_etfs:
+      communication_services: XLC
+      consumer_discretionary: XLY
+      consumer_staples: XLP
+      energy: XLE
+      financials: XLF
+      health_care: XLV
+      industrials: XLI
+      information_technology: XLK
+      materials: XLB
+      real_estate: XLRE
+      utilities: XLU
+  prices:
+    lookback_years: 3
+    interval: "1d"
+    table: "daily_prices"
+    incremental: true
+  fundamentals:
+    statements:
+      - quarterly
+      - annual
+  sec:
+    enabled: true
+    user_agent_env: "SEC_USER_AGENT"
+    rate_limit_per_second: 8
+    form4_lookback_days: 180
+  institutional:
+    enabled: true
+    tracked_funds:
+      - Citadel
+      - Point72
+      - Bridgewater
+      - Tiger Global
+      - Third Point
+      - Berkshire Hathaway
+      - Appaloosa
+      - Baupost
+      - Pershing Square
+  earnings_calendar:
+    lookahead_days: 30
+  transcripts:
+    enabled_if_fmp_key_exists: true
+
+providers:
+  default_market_data: "yfinance"
+  default_filings: "sec_edgar"
+  priority:
+    prices:
+      - polygon
+      - yfinance
+    fundamentals:
+      - fmp
+      - yfinance
+    transcripts:
+      - fmp
+    macro:
+      - fred
+  environment_variables:
+    polygon: POLYGON_API_KEY
+    fmp: FMP_API_KEY
+    fred: FRED_API_KEY
+    codex_model: CODEX_MODEL
+    alpaca_key: ALPACA_API_KEY
+    alpaca_secret: ALPACA_SECRET_KEY
+
+scoring:
+  percentile_group: "gics_sector"
+  score_min: 0
+  score_max: 100
+  neutral_score: 50
+  long_candidate_quantile: 0.80
+  short_candidate_quantile: 0.20
+  default_weights:
+    momentum: 0.20
+    quality: 0.20
+    value: 0.15
+    revisions: 0.15
+    insider: 0.10
+    growth: 0.10
+    short_interest: 0.05
+    institutional: 0.05
+  regime_weights:
+    enabled: true
+    low_vix_threshold: 15
+    high_vix_threshold: 25
+    low_vix_weights:
+      momentum: 0.28
+      quality: 0.17
+      value: 0.10
+      revisions: 0.15
+      insider: 0.10
+      growth: 0.10
+      short_interest: 0.05
+      institutional: 0.05
+    high_vix_weights:
+      momentum: 0.10
+      quality: 0.28
+      value: 0.22
+      revisions: 0.10
+      insider: 0.10
+      growth: 0.10
+      short_interest: 0.05
+      institutional: 0.05
+  crowding:
+    rolling_window_days: 60
+    zscore_warning_threshold: 2.0
+    correlation_deviation_threshold: 0.4
+
+analysis:
+  enabled: true
+  provider: "openrouter"
+  require_ai: true
+  model_env: "OPENROUTER_MODEL"
+  default_model: "deepseek/deepseek-v4-flash:free"
+  openrouter_api_key_env: "OPENROUTER_API_KEY"
+  openrouter_app_name: "Meridian JARVIS"
+  openrouter_timeout_seconds: 300
+  prompt_cache: false
+  result_ttl_days: 30
+  quantitative_weight: 0.60
+  qualitative_weight: 0.40
+  run_cost_ceiling_usd: 25.00
+  cache_table: "analysis_results"
+
+portfolio:
+  target_longs: 20
+  target_shorts: 20
+  gross_exposure: 1.50
+  long_gross_exposure: 0.75
+  short_gross_exposure: 0.75
+  net_exposure_target: 0.00
+  net_exposure_tolerance: 0.10
+  max_position_weight: 0.05
+  min_position_weight: 0.005
+  max_sector_gross_weight: 0.25
+  max_sector_net_weight: 0.10
+  beta_cap_abs: 0.20
+  turnover_budget_per_rebalance: 0.25
+  covariance_lookback_days: 252
+  beta_lookback_days: 60
+  optimizer:
+    default_method: "conviction_tilt"
+    allow_mvo: true
+    mvo_risk_aversion: 5.0
+    transaction_cost_bps: 10
+  earnings_blackout:
+    advisory_days: 2
+    size_multiplier: 0.50
+
+risk:
+  veto_power: true
+  pre_trade_checks_enabled: true
+  factor_model_lookback_days: 120
+  max_single_name_nav_loss: 0.03
+  pairwise_correlation_limit: 0.80
+  liquidity:
+    max_trade_adv_pct: 0.05
+    min_dollar_adv: 10000000
+  circuit_breakers:
+    daily_loss_soft: 0.015
+    daily_loss_hard: 0.025
+    weekly_loss_soft: 0.04
+    max_drawdown_halt: 0.08
+    lock_file: "cache/trading_halt.lock"
+  tail_risk:
+    moderate_vix_threshold: 25
+    high_vix_threshold: 35
+    credit_spread_stress_zscore: 1.0
+    moderate_gross_reduction_multiplier: 0.80
+    gross_reduction_multiplier: 0.50
+  stress_tests:
+    scenarios:
+      - 2008_crisis
+      - 2020_covid_crash
+      - 2022_rate_hikes
+      - sector_shock
+      - momentum_reversal
+      - short_squeeze
+
+execution:
+  mode: "paper"
+  dry_run_default: true
+  allow_live_trading: false
+  require_live_risk_acknowledgement: true
+  broker: "alpaca"
+  alpaca:
+    paper_base_url: "https://paper-api.alpaca.markets"
+    live_base_url: "https://api.alpaca.markets"
+  order_defaults:
+    type: "limit"
+    time_in_force: "day"
+    limit_buffer_bps: 10
+    max_order_adv_pct: 0.02
+    retry_attempts: 3
+
+autopilot:
+  nav: 10000
+  interval_seconds: 900
+  step_timeout_seconds: 1800
+  data_limit: 120
+  analysis_limit: 40
+  min_portfolio_candidates: 30
+  candidate_review_gate: "exclude_rejected"
+
+reporting:
+  output_dir: "output"
+  reports_dir: "output/reports"
+  tear_sheet_format: "markdown"
+  weekly_commentary_day: "Friday"
+  daily_lp_letter:
+    enabled: true
+    confidential_stamp: true
+    compliance_footer: "For research and paper-trading use only. Not investment advice."
+
+dashboard:
+  enabled: true
+  framework: "streamlit"
+  host: "localhost"
+  port: 8501
+  theme: "dark"
+  persona: "JARVIS"
+  hide_streamlit_chrome: true
+  auth:
+    enabled: true
+    provider: "clerk_oidc"
+    require_verified_email: true
+    allowed_emails: [tonymaster69@gmail.com]
+    allowed_domains: []
+  auto_refresh_seconds_market_hours: 60
+  pages:
+    - Portfolio
+    - Research
+    - Risk
+    - Performance
+    - Execution
+    - Letter

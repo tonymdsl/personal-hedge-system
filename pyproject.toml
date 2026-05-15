@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ls-equity-fund"
+version = "0.1.0"
+description = "Meridian Capital Partners local-first long/short equity research and paper-trading platform scaffold."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [{ name = "Meridian Capital Partners" }]
+dependencies = [
+    "pandas>=2.0",
+    "lxml>=4.9",
+    "numpy>=1.24",
+    "yfinance>=0.2.40",
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0",
+    "Authlib>=1.3.2",
+    "scipy>=1.10",
+    "streamlit>=1.42",
+    "plotly>=5.18",
+]
+
+[project.optional-dependencies]
+ai = []  # AI analysis uses the external Codex CLI + local subscription auth.
+execution = ["alpaca-py>=0.28"]
+all = ["alpaca-py>=0.28"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+    "ls_equity_fund*",
+    "common*",
+    "data*",
+    "factors*",
+    "analysis*",
+    "portfolio*",
+    "risk*",
+    "execution*",
+    "reporting*",
+    "dashboard*",
+    "autopilot*",
+]
+exclude = ["tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

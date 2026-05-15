@@ -1,14 +1,38 @@
-.env
+# Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 .pytest_cache/
-*.duckdb
-*.duckdb.wal
-*.log
-backend/data/
-frontend/.next/
-frontend/node_modules/
-frontend/.env.local
-frontend/tsconfig.tsbuildinfo
-.herenow/
-published/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+!.streamlit/secrets.example.toml
+
+# Local research artifacts
+cache/*.db
+cache/*.sqlite
+cache/*.sqlite3
+cache/**/*.db
+cache/**/*.sqlite
+cache/**/*.sqlite3
+output/*
+!output/.gitkeep
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
