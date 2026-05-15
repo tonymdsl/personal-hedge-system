@@ -48,6 +48,7 @@ def test_streamlit_auth_runtime_dependency_is_declared() -> None:
     dependencies = [dependency.lower() for dependency in pyproject["project"]["dependencies"]]
 
     assert any(dependency.startswith("authlib>=") for dependency in dependencies)
+    assert any(dependency.startswith("httpx>=") for dependency in dependencies)
 
 
 def test_clerk_secrets_example_overrides_streamlit_default_prompt() -> None:
