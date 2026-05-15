@@ -223,7 +223,7 @@ def _render_clerk_login(st_module, settings: Mapping[str, Any]) -> None:
         str(settings.get("login_button_label", "Log in with Clerk")),
         on_click=st_module.login,
         type="primary",
-        use_container_width=True,
+        width="stretch",
     )
 
 
@@ -236,7 +236,7 @@ def _render_auth_denied(st_module, reason: str) -> None:
         ),
         unsafe_allow_html=True,
     )
-    st_module.button("Log out", on_click=st_module.logout, use_container_width=True)
+    st_module.button("Log out", on_click=st_module.logout, width="stretch")
 
 
 def _enforce_dashboard_auth(st_module, config: Mapping[str, Any]) -> dict[str, str] | None:
@@ -2630,7 +2630,7 @@ def _render_candidate_review_panel(
         actions = [("Approve", "approved"), ("Watch", "watch"), ("Reject", "rejected")]
         for col, (label, status) in zip(action_cols, actions, strict=True):
             with col:
-                if st_module.button(label, key=f"candidate_review_{status}_{selected_ticker}", use_container_width=True):
+                if st_module.button(label, key=f"candidate_review_{status}_{selected_ticker}", width="stretch"):
                     PortfolioState(db_path).record_candidate_review(
                         selected_ticker,
                         status,
@@ -2719,7 +2719,7 @@ def _render_candidate_board_actions(
             if st_module.button(
                 label,
                 key=f"candidate_board_{side}_{status}_{ticker}",
-                use_container_width=True,
+                width="stretch",
                 type=button_type,
             ):
                 _record_candidate_board_decision(st_module, db_path, candidate, side=side, status=status)
@@ -2739,7 +2739,7 @@ def _render_candidate_analysis_button(
     if st_module.button(
         label,
         key=f"candidate_board_{side}_generate_analysis_{ticker}",
-        use_container_width=True,
+        width="stretch",
         type="secondary",
     ):
         with st_module.spinner(f"Codex is analyzing {ticker}..."):
@@ -3511,7 +3511,7 @@ def _portfolio_page(
                     unsafe_allow_html=True,
                 )
             else:
-                st_module.plotly_chart(_positions_donut(positions), use_container_width=True, config={"displayModeBar": False})
+                st_module.plotly_chart(_positions_donut(positions), width="stretch", config={"displayModeBar": False})
 
     lower_left, lower_right = st_module.columns([1.15, 1.35], gap="large")
     with lower_left:
@@ -3523,7 +3523,7 @@ def _portfolio_page(
                     unsafe_allow_html=True,
                 )
             else:
-                st_module.plotly_chart(_weights_bar(positions), use_container_width=True, config={"displayModeBar": False})
+                st_module.plotly_chart(_weights_bar(positions), width="stretch", config={"displayModeBar": False})
     with lower_right:
         with st_module.container(border=True):
             st_module.markdown(_section_header("Scored universe", "From output CSV"), unsafe_allow_html=True)
@@ -3583,7 +3583,7 @@ def _research_page(st_module, config: Mapping[str, Any], db_path: Path) -> None:
                 unsafe_allow_html=True,
             )
         else:
-            st_module.plotly_chart(heatmap, use_container_width=True, config={"displayModeBar": False})
+            st_module.plotly_chart(heatmap, width="stretch", config={"displayModeBar": False})
 
     st_module.markdown('<div class="research-lower-spacer"></div>', unsafe_allow_html=True)
     left, right = st_module.columns([1.1, 1], gap="large")
@@ -3647,7 +3647,7 @@ def _risk_page(
                     unsafe_allow_html=True,
                 )
             else:
-                st_module.plotly_chart(_weights_bar(positions), use_container_width=True, config={"displayModeBar": False})
+                st_module.plotly_chart(_weights_bar(positions), width="stretch", config={"displayModeBar": False})
 
 
 def _performance_page(st_module, config: Mapping[str, Any], db_path: Path) -> None:
@@ -3835,7 +3835,7 @@ def _letter_page(st_module, config: Mapping[str, Any], db_path: Path) -> None:
                     "Generate JARVIS summary",
                     key=f"letter_summary_{letter.name}",
                     type="primary",
-                    use_container_width=True,
+                    width="stretch",
                 )
                 if clicked:
                     try:
